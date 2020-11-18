@@ -1,0 +1,19 @@
+.center-container {
+    /*display: flex;
+    justify-content: center;
+    align-items: center;*/
+    text-align: center;
+}
+
+.progress-bar {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.spacer {
+    margin-top: 10px;
+}
+
+.logo {
+    margin: 20px 0px 20px 0px;
+}

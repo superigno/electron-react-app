@@ -1,7 +1,6 @@
 import * as React from 'react';
-import logo from '../../assets/images/pc_logo.png';
 
-type Props = {   
+type Props = {
 }
 
 type State = {
@@ -39,9 +38,7 @@ export class Clock extends React.Component<Props, State> {
     render() {
         return (
             <div>
-                <img src={logo} />
-                <h1>Hello, world!</h1>
-                <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
+                <h2>It is {this.state.date.toLocaleTimeString()}.</h2>                
             </div>
         );
     }

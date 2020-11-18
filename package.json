@@ -2,7 +2,7 @@
   "name": "fxchoice-installation-manager",
   "productName": "fxchoice-installation-manager",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Global FxChoice Installation Manager using Electron",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -81,10 +81,12 @@
     "typescript": "^4.0.5"
   },
   "dependencies": {
+    "@blueprintjs/core": "^3.36.0",
     "@types/react": "^16.9.56",
     "@types/react-dom": "^16.9.9",
     "electron-squirrel-startup": "^1.0.0",
+    "extract-zip": "^2.0.1",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1"    
   }
 }
