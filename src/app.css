@@ -8,6 +8,13 @@
 .progress-bar {
     width: 80%;
     margin: 0 auto;
+    word-break: break-all;
+}
+
+.progress-bar-desc {
+    width: 90%;
+    display: inline-block;
+    font-size: small; 
 }
 
 .spacer {

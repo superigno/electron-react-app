@@ -1,13 +1,14 @@
 import Path from 'path';
 import fs from 'fs';
 
-export const getTotalFileCount = (p: string) => {
+//TODO: improve
+export const getTotalFileCount = (pathArray: string[]) => {
     let fileCount = 0;
     const countFiles = function (path: string) {
         if (fs.existsSync(path)) {
             fs.readdirSync(path).forEach((file: string, index: number) => {
                 const curPath = Path.join(path, file);
-                if (fs.lstatSync(curPath).isDirectory()) { // recurse
+                if (fs.lstatSync(curPath).isDirectory()) {
                     countFiles(curPath);
                 } else {
                     fileCount++;
@@ -15,15 +16,17 @@ export const getTotalFileCount = (p: string) => {
             });
         }
     };
-    countFiles(p);
+    pathArray.forEach(path => {
+        countFiles(path);
+    });    
     return fileCount;
 };
 
 const afs = fs.promises;
-export const deleteFolderRecursive = async (path: fs.PathLike, cb: (filename: string) => void ) => {
+export const deleteFolderRecursive = async (path: string, cb: (filename: string) => void ) => {
     if (fs.existsSync(path)) {
         for (let entry of await afs.readdir(path)) {
-            const curPath = path + "/" + entry;
+            const curPath = Path.join(path, entry);
             if ((await afs.lstat(curPath)).isDirectory()) {
                 await deleteFolderRecursive(curPath , cb);
             } else {
@@ -33,7 +36,7 @@ export const deleteFolderRecursive = async (path: fs.PathLike, cb: (filename: st
         }
         await afs.rmdir(path);
     }
-
 };
+
 
 
