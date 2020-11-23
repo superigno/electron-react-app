@@ -88,7 +88,7 @@ export const UninstallFxChoice = (props: propsType) => {
                     cancelButtonText="Cancel"
                     confirmButtonText="Uninstall"
                     icon="delete"
-                    intent={Intent.DANGER}
+                    intent={Intent.NONE}
                     isOpen={isAlertOpen}
                     onCancel={handleAlertCancel}
                     onConfirm={uninstallPackage}

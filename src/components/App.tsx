@@ -5,16 +5,11 @@ import "@blueprintjs/core/lib/css/blueprint.css";
 import "./../app.css";
 import { Manager } from './Manager';
 
-const appVersion = "1.0.0";
-
 const App = () => {
-    React.useEffect(() => {
-        document.title = `Global FxChoice Installation Manager v${appVersion}`;
-    });
-
     return (
         <div className="center-container">
             <Manager />
+            <div className="footer">Copyright © 2020 Pure Commerce. All rights reserved.</div>
         </div>
     );
 }

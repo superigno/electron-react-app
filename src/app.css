@@ -24,3 +24,15 @@
 .logo {
     margin: 20px 0px 20px 0px;
 }
+
+.footer {
+    font-size: xx-small;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgb(44, 68, 132);
+    color: white;
+    text-align: center;
+    padding: 3px;
+}

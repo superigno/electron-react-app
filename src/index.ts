@@ -21,6 +21,16 @@ const createWindow = (): void => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools({mode: 'detach'});
+
+  mainWindow.setMenu(null);
+  mainWindow.setMaximizable(false);
+  mainWindow.on('will-resize', (e) => {
+    //prevent resizing even if resizable property is true.
+        e.preventDefault();
+    });
+
+  mainWindow.setTitle(`${app.getName()} v${app.getVersion()}`);
+
 };
 
 // This method will be called when Electron has finished

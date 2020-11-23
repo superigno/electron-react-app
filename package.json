@@ -1,12 +1,12 @@
 {
   "name": "fxchoice-installation-manager",
-  "productName": "fxchoice-installation-manager",
+  "productName": "Global FxChoice Installation Manager",
   "version": "1.0.0",
   "description": "Global FxChoice Installation Manager using Electron",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
-    "package": "electron-forge package",
+    "package": "electron-forge package --arch ia32",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts ."
@@ -16,7 +16,12 @@
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "name": "GlobalFxChoiceInstallationManager",
+        "win32metadata": {
+          "requested-execution-level": "requireAdministrator"
+        }
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
