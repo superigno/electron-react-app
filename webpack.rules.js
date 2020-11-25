@@ -24,4 +24,21 @@ module.exports = [
       }
     }
   },
+  {
+    test: /\.css$/,
+    use: [{ loader: 'style-loader' }, { loader: 'css-loader' }]
+  },
+  {
+    test: /\.(png|gif|jpg)$/,
+    use: [
+      {
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',
+          outputPath: 'assets/images/',
+          publicPath: '../assets/images/'
+        }
+      }
+    ]
+  }
 ];

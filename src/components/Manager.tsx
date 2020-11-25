@@ -1,6 +1,6 @@
 import React from 'react';
 import { Intent, ProgressBar, Alert } from '@blueprintjs/core';
-import logo from '../../assets/images/pc_logo.png';
+import logo from '../../assets/images/pc.png';
 import { InstallFxChoice, InstallUninstallParamsType } from './InstallFxChoice';
 import { UninstallFxChoice } from './UninstallFxChoice';
 import { Spacer } from './Spacer';
@@ -21,10 +21,12 @@ const AlertMessage = (props: {isSuccess: boolean, message: string}) => {
             <>
                 <h3>Error</h3>
                 <p>{unescape(props.message)}</p>
-                <p>Make sure to uninstall Global FxChoice first before installing. If error persists, contact your Adminstrator.</p>                
+                <p>Please check logs for details. If error persists, contact your Adminstrator.</p>                
             </>
         )
     }
+
+    //TODO: improve error
 };
 
 export const Manager = () => {

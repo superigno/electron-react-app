@@ -18,6 +18,7 @@
     "forge": {
       "packagerConfig": {
         "name": "GlobalFxChoiceInstallationManager",
+        "icon": "assets/icons/pc.ico",
         "win32metadata": {
           "requested-execution-level": "requireAdministrator"
         }
