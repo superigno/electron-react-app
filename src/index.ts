@@ -1,4 +1,5 @@
 import { app, BrowserWindow } from 'electron';
+import isDev from 'electron-is-dev';
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -19,10 +20,13 @@ const createWindow = (): void => {
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools({mode: 'detach'});
-
-  mainWindow.setMenu(null);
+  if (isDev) {
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools({mode: 'detach'});    
+  } else {
+    mainWindow.setMenu(null);
+  }
+  
   mainWindow.setMaximizable(false);
   mainWindow.on('will-resize', (e) => {
     //prevent resizing even if resizable property is true.
@@ -36,7 +40,20 @@ const createWindow = (): void => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', () => {
+
+  createWindow();
+  
+  if (isDev) {
+    const devTools = require('electron-devtools-installer');
+    const installExtension = devTools.default;
+    const REACT_DEVELOPER_TOOLS = devTools.REACT_DEVELOPER_TOOLS;
+    installExtension(REACT_DEVELOPER_TOOLS)
+      .then((name: any) => console.log(`Added Extension:  ${name}`))
+      .catch((error: any) => console.log(`An error occurred: , ${error}`));
+  }
+
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
