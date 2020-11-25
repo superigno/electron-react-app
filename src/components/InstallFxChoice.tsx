@@ -3,6 +3,7 @@ import { Button, Intent, Alert } from '@blueprintjs/core';
 import extract from 'extract-zip';
 import Path from 'path';
 import fs from 'fs';
+import {RunServiceBat} from '../util/ServiceUtils';
 
 type propsType = {
     source: string,
@@ -18,8 +19,7 @@ export type InstallUninstallParamsType = {
     description: string
 };
 
-export const InstallFxChoice = (props: propsType) => {
-
+export const InstallFxChoice = (props: propsType) => {    
     const source = props.source;
     const target = props.target;
     const isMounted = React.useRef(true);
@@ -37,15 +37,15 @@ export const InstallFxChoice = (props: propsType) => {
     const isInstalling = (params: InstallUninstallParamsType) => {
         props.onInstall(params);
         if (isMounted.current) { //Manager hides button upon progress, so need to check if present to prevent error
-           setDisableButton(params.inProgress);
+            setDisableButton(params.inProgress);
         }
-    };   
+    };
 
-    React.useEffect(()=> {
+    React.useEffect(() => {
         return () => {
             isMounted.current = false;
         }
-    },[]);
+    }, []);
 
     const hasError = (msg: string) => {
         props.onError(msg);
@@ -55,8 +55,8 @@ export const InstallFxChoice = (props: propsType) => {
         props.onSuccess(msg);
     };
 
-    const isDirectoriesExist = (target: string) => {
-        if (fs.existsSync(Path.join(target, 'fxchoice')) || fs.existsSync(Path.join(target, 'fxchoicemanager'))) {
+    const isDirectoriesExist = (path: string) => {
+        if (fs.existsSync(Path.join(path, 'fxchoice')) || fs.existsSync(Path.join(path, 'fxchoicemanager'))) {
             return true;
         }
         return false;
@@ -70,17 +70,42 @@ export const InstallFxChoice = (props: propsType) => {
             return;
         }
 
+        const fxchoiceInstallBatPath = `${Path.join(target, 'fxchoice', 'bat', 'installService.bat')}`;
+        const fxchoiceServiceManagerInstallBatPath = `${Path.join(target, 'fxchoiceservicemanager', 'bat', 'installService.bat')}`;
+        const fxchoiceStartBatPath = `${Path.join(target, 'fxchoice', 'bat', 'startService.bat')}`;
+        const fxchoiceServiceManagerStartBatPath = `${Path.join(target, 'fxchoiceservicemanager', 'bat', 'startService.bat')}`;
+
         extract(source, {
             dir: target, onEntry: (entry, zipFile) => {
                 isInstalling({ inProgress: true, progress: zipFile.entriesRead / zipFile.entryCount, description: `Installing ${Path.join(target, entry.fileName)}` });
             }
+        }).then(() => {
+            return RunServiceBat(fxchoiceInstallBatPath, (msg) => {
+                console.log(msg);
+                isInstalling({ inProgress: true, progress: 1, description: 'Installing Global FxChoice service...' });            
+            });
+        }).then(() => {            
+            return RunServiceBat(fxchoiceServiceManagerInstallBatPath, (msg) => {
+                console.log(msg);
+                isInstalling({ inProgress: true, progress: 1, description: 'Installing Global FxChoice Service Manager service...' });    
+            });            
+        }).then(() => {            
+            return RunServiceBat(fxchoiceStartBatPath, (msg) => {
+                console.log(msg);
+                isInstalling({ inProgress: true, progress: 1, description: 'Starting Global FxChoice service...' });    
+            });            
+        }).then(() => {            
+            return RunServiceBat(fxchoiceServiceManagerStartBatPath, (msg) => {
+                console.log(msg);
+                isInstalling({ inProgress: true, progress: 1, description: 'Starting Global FxChoice Service Manager service...' });    
+            });            
         }).then(() => {
             isInstalling({ inProgress: false, progress: 0, description: 'Installation complete.' });
             isSuccess('Global FxChoice successfully installed.');
         }).catch(error => {
             isInstalling({ inProgress: false, progress: 0, description: error });
             hasError(error);
-        });
+        });        
 
     };
 

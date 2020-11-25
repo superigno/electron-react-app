@@ -3,6 +3,8 @@ import { Button, Intent, Alert } from '@blueprintjs/core';
 import {getTotalFileCount, deleteFolderRecursive} from '../util/FileUtils';
 import {InstallUninstallParamsType} from './InstallFxChoice';
 import Path from 'path';
+import {RunServiceBat} from '../util/ServiceUtils';
+import fs from 'fs';
 
 type propsType = {
     path: string,
@@ -48,27 +50,49 @@ export const UninstallFxChoice = (props: propsType) => {
     const isSuccess = (msg: string) => {
         props.onSuccess(msg);
     };
+    
+    const isDirectoriesExist = (path: string) => {
+        if (fs.existsSync(Path.join(path, 'fxchoice')) || fs.existsSync(Path.join(path, 'fxchoicemanager'))) {
+            return true;
+        }
+        return false;
+    };
 
     const uninstallPackage = () => {
         setAlertOpen(false);
 
+        if (!isDirectoriesExist(path)) {
+            hasError('Already uninstalled.');
+            return;
+        }
+
         const totalFileCount = getTotalFileCount([fxchoicePath, fxchoiceServiceManagerPath]);
         console.log('Total:', totalFileCount);
         
-        let totalDeleted = 0;
-        var promises = [];
-        promises.push(deleteFolderRecursive(fxchoicePath, (filename: string) => {
-            totalDeleted++;
-            isUninstalling({inProgress: true, progress: totalDeleted / totalFileCount, description: `Uninstalling ${filename}`});
-        }));
+        let totalDeleted = 0;        
 
-        promises.push(deleteFolderRecursive(fxchoiceServiceManagerPath, (filename: string) => {
-            totalDeleted++;
-            isUninstalling({inProgress: true, progress: totalDeleted / totalFileCount, description: `Uninstalling ${filename}`});
-        }));
+        const fxchoiceBatPath = `${Path.join(fxchoicePath, 'bat', 'uninstallService.bat')}`;
+        const fxchoiceServiceManagerBatPath = `${Path.join(fxchoiceServiceManagerPath, 'bat', 'uninstallService.bat')}`;
 
-        Promise.all(promises)
-        .then(()=> {
+        RunServiceBat(fxchoiceBatPath, (msg) => {
+            console.log(msg);
+            isUninstalling({ inProgress: true, progress: 1, description: 'Uninstalling Global FxChoice service...' });            
+        }).then(() => {            
+            return RunServiceBat(fxchoiceServiceManagerBatPath, (msg) => {
+                console.log(msg);
+                isUninstalling({ inProgress: true, progress: 1, description: 'Uninstalling Global FxChoice Service Manager service...' });    
+            });            
+        }).then(() => {
+            return deleteFolderRecursive(fxchoicePath, (filename: string) => {
+                totalDeleted++;
+                isUninstalling({inProgress: true, progress: totalDeleted / totalFileCount, description: `Uninstalling ${filename}`});
+            });
+        }).then(()=>{
+            return deleteFolderRecursive(fxchoiceServiceManagerPath, (filename: string) => {
+                totalDeleted++;
+                isUninstalling({inProgress: true, progress: totalDeleted / totalFileCount, description: `Uninstalling ${filename}`});
+            })
+        }).then(()=> {
             console.log('Uninstallation complete.');
             console.log('Total deleted:', totalDeleted);
             isUninstalling({inProgress: false, progress: 0, description: null});
