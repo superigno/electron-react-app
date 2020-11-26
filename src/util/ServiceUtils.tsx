@@ -1,4 +1,5 @@
 import child_process from 'child_process';
+import logger from 'electron-log';
 
 const regexSuccess = /^(service).*(installed|removed|started)$/;
 
@@ -16,7 +17,7 @@ export const RunServiceBat = (path: string, cb: (msg: string) => void) => {
                     resolve('Success');
                     bat.kill();                    
                 } else if (strLower.indexOf('not removed') > -1) {
-                    console.log('Service may have been removed already, continuing...');
+                    logger.log('Service may have been removed already, continuing...');
                     resolve('Success');
                     bat.kill();                    
                 }
@@ -31,7 +32,7 @@ export const RunServiceBat = (path: string, cb: (msg: string) => void) => {
             });
 
             bat.on('exit', (code) => {
-                let str: string = `Child exited with code ${code}`;
+                let str: string = code ? `Process exited with code ${code}` : `Process exited`;
                 cb(str);
                 if (code !== 0) {
                     reject(str);
@@ -39,10 +40,12 @@ export const RunServiceBat = (path: string, cb: (msg: string) => void) => {
             });
 
             bat.on('error', function(err) {
+                logger.error(err.message);
                 reject(err.message);
             });
 
         } catch(uncaughtException) {
+            logger.error('Exception occurred:', uncaughtException);
             reject(uncaughtException);
         }
 

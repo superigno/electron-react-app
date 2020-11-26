@@ -4,8 +4,10 @@ import "normalize.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "./../app.css";
 import { Manager } from './Manager';
+import AppConfig from '../config/AppConfig';
 
 const App = () => {
+    AppConfig.loadAppDefaults();
     return (
         <div className="center-container">
             <Manager />

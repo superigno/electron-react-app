@@ -4,6 +4,7 @@ import extract from 'extract-zip';
 import Path from 'path';
 import fs from 'fs';
 import {RunServiceBat} from '../util/ServiceUtils';
+import logger from 'electron-log';
 
 type propsType = {
     source: string,
@@ -63,10 +64,14 @@ export const InstallFxChoice = (props: propsType) => {
     };
 
     const installPackage = () => {
+
+        logger.log('Start Installation');
+
         setAlertOpen(false);
 
         if (isDirectoriesExist(target)) {
             hasError('Directories already exist.');
+            logger.error('Directories already exist.');
             return;
         }
 
@@ -81,35 +86,37 @@ export const InstallFxChoice = (props: propsType) => {
             }
         }).then(() => {
             return RunServiceBat(fxchoiceInstallBatPath, (msg) => {
-                console.log(msg);
+                logger.log(msg);
                 isInstalling({ inProgress: true, progress: 1, description: 'Installing Global FxChoice service...' });            
             });
         }).then(() => {            
             return RunServiceBat(fxchoiceServiceManagerInstallBatPath, (msg) => {
-                console.log(msg);
+                logger.log(msg);
                 isInstalling({ inProgress: true, progress: 1, description: 'Installing Global FxChoice Service Manager service...' });    
             });            
         }).then(() => {            
             return RunServiceBat(fxchoiceStartBatPath, (msg) => {
-                console.log(msg);
+                logger.log(msg);
                 isInstalling({ inProgress: true, progress: 1, description: 'Starting Global FxChoice service...' });    
             });            
         }).then(() => {            
             return RunServiceBat(fxchoiceServiceManagerStartBatPath, (msg) => {
-                console.log(msg);
+                logger.log(msg);
                 isInstalling({ inProgress: true, progress: 1, description: 'Starting Global FxChoice Service Manager service...' });    
             });            
         }).then(() => {
+            logger.log('Installation complete.');
             isInstalling({ inProgress: false, progress: 0, description: 'Installation complete.' });
             isSuccess('Global FxChoice successfully installed.');
         }).catch(error => {
+            logger.log('Error:', error);
             isInstalling({ inProgress: false, progress: 0, description: error });
             hasError(error);
         });        
 
     };
-
     return (
+        
         <>
             <div>
                 <Button intent={Intent.PRIMARY} onClick={handleAlertOpen} text="Install Global FxChoice" disabled={disableButton} />

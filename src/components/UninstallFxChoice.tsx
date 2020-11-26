@@ -5,6 +5,7 @@ import {InstallUninstallParamsType} from './InstallFxChoice';
 import Path from 'path';
 import {RunServiceBat} from '../util/ServiceUtils';
 import fs from 'fs';
+import logger from 'electron-log';
 
 type propsType = {
     path: string,
@@ -59,27 +60,29 @@ export const UninstallFxChoice = (props: propsType) => {
     };
 
     const uninstallPackage = () => {
+
+        logger.log('Start Uninstallation');
+
         setAlertOpen(false);
 
         if (!isDirectoriesExist(path)) {
             hasError('Already uninstalled.');
+            logger.error('Already uninstalled.');
             return;
         }
 
         const totalFileCount = getTotalFileCount([fxchoicePath, fxchoiceServiceManagerPath]);
-        console.log('Total:', totalFileCount);
-        
         let totalDeleted = 0;        
 
         const fxchoiceBatPath = `${Path.join(fxchoicePath, 'bat', 'uninstallService.bat')}`;
         const fxchoiceServiceManagerBatPath = `${Path.join(fxchoiceServiceManagerPath, 'bat', 'uninstallService.bat')}`;
 
         RunServiceBat(fxchoiceBatPath, (msg) => {
-            console.log(msg);
+            logger.log(msg);
             isUninstalling({ inProgress: true, progress: 1, description: 'Uninstalling Global FxChoice service...' });            
         }).then(() => {            
             return RunServiceBat(fxchoiceServiceManagerBatPath, (msg) => {
-                console.log(msg);
+                logger.log(msg);
                 isUninstalling({ inProgress: true, progress: 1, description: 'Uninstalling Global FxChoice Service Manager service...' });    
             });            
         }).then(() => {
@@ -93,11 +96,13 @@ export const UninstallFxChoice = (props: propsType) => {
                 isUninstalling({inProgress: true, progress: totalDeleted / totalFileCount, description: `Uninstalling ${filename}`});
             })
         }).then(()=> {
-            console.log('Uninstallation complete.');
-            console.log('Total deleted:', totalDeleted);
+            logger.log('Uninstallation complete.');
+            logger.log('Total files:', totalFileCount);
+            logger.log('Total deleted:', totalDeleted);
             isUninstalling({inProgress: false, progress: 0, description: null});
             isSuccess('Global FxChoice successfully uninstalled.');
         }).catch(error => {
+            logger.log('Error:', error);
             isUninstalling({ inProgress: false, progress: 0, description: error });
             hasError(error);
         });
