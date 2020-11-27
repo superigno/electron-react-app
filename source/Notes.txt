@@ -1,0 +1,3 @@
+- Upload package here in zipped format (ie: GlobalFxChoice.zip)
+- Package should contain fxchoice and fxchoiceservicemanager folders
+- There should only be one zipped file

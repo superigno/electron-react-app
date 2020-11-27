@@ -1,25 +1,13 @@
 import Path from 'path';
 import fs from 'fs';
+import countFiles from 'count-files';
 
-//TODO: improve
-export const getTotalFileCount = (pathArray: string[]) => {
-    let fileCount = 0;
-    const countFiles = function (path: string) {
-        if (fs.existsSync(path)) {
-            fs.readdirSync(path).forEach((file: string, index: number) => {
-                const curPath = Path.join(path, file);
-                if (fs.lstatSync(curPath).isDirectory()) {
-                    countFiles(curPath);
-                } else {
-                    fileCount++;
-                }
-            });
-        }
-    };
-    pathArray.forEach(path => {
-        countFiles(path);
-    });    
-    return fileCount;
+export const getTotalFileCount = (path: string): Promise<number> => {
+    return new Promise((resolve) => {
+        countFiles(path, function (err: any, results: any) {
+            resolve(results.files);
+        });
+    });
 };
 
 const afs = fs.promises;

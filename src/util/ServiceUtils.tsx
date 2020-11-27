@@ -3,7 +3,7 @@ import logger from 'electron-log';
 
 const regexSuccess = /^(service).*(installed|removed|started)$/;
 
-export const RunServiceBat = (path: string, cb: (msg: string) => void) => {
+export const RunService = (path: string, cb: (msg: string) => void) => {
     return new Promise( (resolve, reject) => {
         const spawn = child_process.spawn;
         const bat = spawn(path);

@@ -3,8 +3,9 @@ import { Button, Intent, Alert } from '@blueprintjs/core';
 import extract from 'extract-zip';
 import Path from 'path';
 import fs from 'fs';
-import {RunServiceBat} from '../util/ServiceUtils';
+import { RunService } from '../util/ServiceUtils';
 import logger from 'electron-log';
+import AppConstants from '../constants/AppConstants';
 
 type propsType = {
     source: string,
@@ -20,7 +21,8 @@ export type InstallUninstallParamsType = {
     description: string
 };
 
-export const InstallFxChoice = (props: propsType) => {    
+export const InstallFxChoice = (props: propsType) => {
+
     const source = props.source;
     const target = props.target;
     const isMounted = React.useRef(true);
@@ -56,67 +58,94 @@ export const InstallFxChoice = (props: propsType) => {
         props.onSuccess(msg);
     };
 
-    const isDirectoriesExist = (path: string) => {
-        if (fs.existsSync(Path.join(path, 'fxchoice')) || fs.existsSync(Path.join(path, 'fxchoicemanager'))) {
+    const isTargetDirectoriesExist = () => {
+        if (fs.existsSync(Path.join(target, AppConstants.FXCHOICE_PATH)) || fs.existsSync(Path.join(target, AppConstants.FXCHOICE_MANAGER_PATH))) {
             return true;
         }
         return false;
     };
 
+    const getSourceFile = (): string[] => {        
+        let zipFiles = fs.readdirSync(source).filter(function (file) {
+            return Path.extname(file).toLowerCase() === '.zip';
+        });
+        logger.log('Source file found:', zipFiles);
+        return zipFiles;   
+    }
+
     const installPackage = () => {
 
-        logger.log('Start Installation');
+        logger.log('***** Start Installation *****');
 
         setAlertOpen(false);
 
-        if (isDirectoriesExist(target)) {
+        if (isTargetDirectoriesExist()) {
             hasError('Directories already exist.');
             logger.error('Directories already exist.');
             return;
         }
 
-        const fxchoiceInstallBatPath = `${Path.join(target, 'fxchoice', 'bat', 'installService.bat')}`;
-        const fxchoiceServiceManagerInstallBatPath = `${Path.join(target, 'fxchoiceservicemanager', 'bat', 'installService.bat')}`;
-        const fxchoiceStartBatPath = `${Path.join(target, 'fxchoice', 'bat', 'startService.bat')}`;
-        const fxchoiceServiceManagerStartBatPath = `${Path.join(target, 'fxchoiceservicemanager', 'bat', 'startService.bat')}`;
+        let soureFileArr = getSourceFile();
+        if (soureFileArr.length > 1) {
+            hasError('Too many .zip files in the installation source folder.');
+            return;
+        } else if (soureFileArr.length === 0) {
+            hasError('Please upload a valid file in the installation source folder (ie: source/GlobalFxChoice.zip)');
+            return;
+        }
+        
+        const sourceFilePath = Path.join(source, soureFileArr[0]);
+        const fxchoiceInstallBatPath = Path.join(target, AppConstants.FXCHOICE_PATH, AppConstants.INSTALL_SERVICE_PATH);
+        const fxchoiceServiceManagerInstallBatPath = Path.join(target, AppConstants.FXCHOICE_MANAGER_PATH, AppConstants.INSTALL_MANAGER_SERVICE_PATH);
+        const fxchoiceStartBatPath = Path.join(target, AppConstants.FXCHOICE_PATH, AppConstants.START_SERVICE_PATH);
+        const fxchoiceServiceManagerStartBatPath = Path.join(target, AppConstants.FXCHOICE_MANAGER_PATH, AppConstants.START_MANAGER_SERVICE_PATH);
+        
+        let progressValue: number = 0;
+        //hack for aesthetic purposes
+        const estimatedServiceProgressValue: number = 0.01;
+        const numberOfServices = 4;
 
-        extract(source, {
+        extract(sourceFilePath, {
             dir: target, onEntry: (entry, zipFile) => {
-                isInstalling({ inProgress: true, progress: zipFile.entriesRead / zipFile.entryCount, description: `Installing ${Path.join(target, entry.fileName)}` });
+                progressValue = (zipFile.entriesRead / zipFile.entryCount) - (estimatedServiceProgressValue*numberOfServices);
+                isInstalling({ inProgress: true, progress: progressValue, description: `Installing ${Path.join(target, entry.fileName)}` });
             }
         }).then(() => {
-            return RunServiceBat(fxchoiceInstallBatPath, (msg) => {
+            progressValue += estimatedServiceProgressValue;
+            return RunService(fxchoiceInstallBatPath, (msg) => {
                 logger.log(msg);
-                isInstalling({ inProgress: true, progress: 1, description: 'Installing Global FxChoice service...' });            
+                isInstalling({ inProgress: true, progress: progressValue, description: 'Installing Global FxChoice service...' });
             });
-        }).then(() => {            
-            return RunServiceBat(fxchoiceServiceManagerInstallBatPath, (msg) => {
-                logger.log(msg);
-                isInstalling({ inProgress: true, progress: 1, description: 'Installing Global FxChoice Service Manager service...' });    
-            });            
-        }).then(() => {            
-            return RunServiceBat(fxchoiceStartBatPath, (msg) => {
-                logger.log(msg);
-                isInstalling({ inProgress: true, progress: 1, description: 'Starting Global FxChoice service...' });    
-            });            
-        }).then(() => {            
-            return RunServiceBat(fxchoiceServiceManagerStartBatPath, (msg) => {
-                logger.log(msg);
-                isInstalling({ inProgress: true, progress: 1, description: 'Starting Global FxChoice Service Manager service...' });    
-            });            
         }).then(() => {
-            logger.log('Installation complete.');
+            progressValue += estimatedServiceProgressValue;
+            return RunService(fxchoiceServiceManagerInstallBatPath, (msg) => {
+                logger.log(msg);
+                isInstalling({ inProgress: true, progress: progressValue, description: 'Installing Global FxChoice Service Manager service...' });
+            });
+        }).then(() => {
+            progressValue += estimatedServiceProgressValue;
+            return RunService(fxchoiceStartBatPath, (msg) => {
+                logger.log(msg);
+                isInstalling({ inProgress: true, progress: progressValue, description: 'Starting Global FxChoice service...' });
+            });
+        }).then(() => {
+            progressValue += estimatedServiceProgressValue;
+            return RunService(fxchoiceServiceManagerStartBatPath, (msg) => {
+                logger.log(msg);
+                isInstalling({ inProgress: true, progress: progressValue, description: 'Starting Global FxChoice Service Manager service...' });
+            });
+        }).then(() => {
             isInstalling({ inProgress: false, progress: 0, description: 'Installation complete.' });
             isSuccess('Global FxChoice successfully installed.');
+            logger.log('Installation complete.');
         }).catch(error => {
             logger.log('Error:', error);
             isInstalling({ inProgress: false, progress: 0, description: error });
             hasError(error);
-        });        
+        });
 
     };
     return (
-        
         <>
             <div>
                 <Button intent={Intent.PRIMARY} onClick={handleAlertOpen} text="Install Global FxChoice" disabled={disableButton} />

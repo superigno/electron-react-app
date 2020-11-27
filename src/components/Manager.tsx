@@ -4,9 +4,7 @@ import logo from '../../assets/images/pc.png';
 import { InstallFxChoice, InstallUninstallParamsType } from './InstallFxChoice';
 import { UninstallFxChoice } from './UninstallFxChoice';
 import { Spacer } from './Spacer';
-
-const source = 'C:\\Users\\gino.q\\Desktop\\temp1\\GlobalFxChoice-Installer-PROD-LS-HK_v1-3-08.zip';
-const target = 'C:\\Users\\gino.q\\Desktop\\temp2';
+import AppConstants from '../constants/AppConstants';
 
 const AlertMessage = (props: {isSuccess: boolean, message: string}) => {
     if (props.isSuccess) {
@@ -30,6 +28,9 @@ const AlertMessage = (props: {isSuccess: boolean, message: string}) => {
 };
 
 export const Manager = () => {
+
+    const source = AppConstants.SOURCE;
+    const target = AppConstants.TARGET;
 
     const [progress, setProgress] = React.useState({ inProgress: false, value: 0, description: null });
     const [alert, setAlert] = React.useState({ isError: false, openAlert: false, message: null });
