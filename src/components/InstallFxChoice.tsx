@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button, Intent, Alert } from '@blueprintjs/core';
-import extract from 'extract-zip';
 import Path from 'path';
 import fs from 'fs';
 import { RunService } from '../util/ServiceUtils';
 import logger from 'electron-log';
 import AppConstants from '../constants/AppConstants';
+import { extractZip } from '../util/FileUtils';
 
 type propsType = {
     source: string,
@@ -65,12 +65,12 @@ export const InstallFxChoice = (props: propsType) => {
         return false;
     };
 
-    const getSourceFile = (): string[] => {        
+    const getSourceFile = (): string[] => {
         let zipFiles = fs.readdirSync(source).filter(function (file) {
             return Path.extname(file).toLowerCase() === '.zip';
         });
         logger.log('Source file found:', zipFiles);
-        return zipFiles;   
+        return zipFiles;
     }
 
     const installPackage = () => {
@@ -93,23 +93,23 @@ export const InstallFxChoice = (props: propsType) => {
             hasError('Please upload a valid file in the package folder (ie: resources/package/GlobalFxChoice.zip)');
             return;
         }
-        
+
         const sourceFilePath = Path.join(source, soureFileArr[0]);
         const fxchoiceInstallBatPath = Path.join(target, AppConstants.FXCHOICE_PATH, AppConstants.INSTALL_SERVICE_PATH);
         const fxchoiceServiceManagerInstallBatPath = Path.join(target, AppConstants.FXCHOICE_MANAGER_PATH, AppConstants.INSTALL_MANAGER_SERVICE_PATH);
         const fxchoiceStartBatPath = Path.join(target, AppConstants.FXCHOICE_PATH, AppConstants.START_SERVICE_PATH);
         const fxchoiceServiceManagerStartBatPath = Path.join(target, AppConstants.FXCHOICE_MANAGER_PATH, AppConstants.START_MANAGER_SERVICE_PATH);
-        
+
+        let totalSizeExtracted = 0;
         let progressValue: number = 0;
         //hack for aesthetic purposes
         const estimatedServiceProgressValue: number = 0.01;
         const numberOfServices = 4;
 
-        extract(sourceFilePath, {
-            dir: target, onEntry: (entry, zipFile) => {
-                progressValue = (zipFile.entriesRead / zipFile.entryCount) - (estimatedServiceProgressValue*numberOfServices);
-                isInstalling({ inProgress: true, progress: progressValue, description: `Installing ${Path.join(target, entry.fileName)}` });
-            }
+        extractZip(sourceFilePath, target, (entry, filename, totalSize) => {
+            totalSizeExtracted += entry.size;
+            progressValue = (totalSizeExtracted / totalSize) - (estimatedServiceProgressValue * numberOfServices);
+            isInstalling({ inProgress: true, progress: progressValue, description: `Installing ${filename}` });
         }).then(() => {
             progressValue += estimatedServiceProgressValue;
             return RunService(fxchoiceInstallBatPath, (msg) => {
@@ -138,7 +138,7 @@ export const InstallFxChoice = (props: propsType) => {
             isInstalling({ inProgress: false, progress: 0, description: 'Installation complete.' });
             isSuccess('Global FxChoice successfully installed.');
             logger.log('Installation complete.');
-        }).catch(error => {
+        }).catch((error: any) => {
             logger.log('Error:', error);
             isInstalling({ inProgress: false, progress: 0, description: error });
             hasError(error);

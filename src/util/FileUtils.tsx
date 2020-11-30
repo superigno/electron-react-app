@@ -1,6 +1,7 @@
 import Path from 'path';
 import fs from 'fs';
 import countFiles from 'count-files';
+import StreamZip from 'node-stream-zip';
 
 export const getTotalFileCount = (path: string): Promise<number> => {
     return new Promise((resolve) => {
@@ -25,6 +26,35 @@ export const deleteFolderRecursive = async (path: string, cb: (filename: string)
         await afs.rmdir(path);
     }
 };
+
+export const extractZip = (sourceFilePath: string, targetPath: string, cb: (entry: StreamZip.ZipEntry, filename: string, totalSize: number) => void) => {
+    return new Promise( (resolve, reject) => {
+        const zip = new StreamZip({
+            file: sourceFilePath,
+            storeEntries: true,
+            skipEntryNameValidation: true
+        });        
+        zip.on('ready', () => {               
+            let totalSize = 0;
+            for (const entry of Object.values(zip.entries())) {
+                totalSize+=entry.size;
+            }
+            zip.extract(null, targetPath, (err) => {
+                if (err) {
+                    reject(err);                    
+                } else {
+                    resolve('Success');
+                }
+                zip.close();
+            });        
+            zip.on('extract', (entry, file) => {
+                cb(entry, file, totalSize);
+            });
+        });
+    });
+};
+
+
 
 
 

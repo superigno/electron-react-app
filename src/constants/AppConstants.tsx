@@ -3,9 +3,8 @@ import Path from 'path';
 export default class AppConstants {
 
     static SOURCE = Path.join('resources\\package');
-    //static TARGET = Path.join('C:\\');
-    static TARGET = Path.join('C:\\Users\\gino.q\\Desktop\\temp2');
-
+    static TARGET = Path.join('C:\\');
+    
     static FXCHOICE_PATH = Path.join('fxchoice');
     static FXCHOICE_MANAGER_PATH = Path.join('fxchoiceservicemanager');
 
