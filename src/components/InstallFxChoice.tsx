@@ -87,10 +87,10 @@ export const InstallFxChoice = (props: propsType) => {
 
         let soureFileArr = getSourceFile();
         if (soureFileArr.length > 1) {
-            hasError('Too many .zip files in the installation source folder.');
+            hasError('Too many .zip files in the package folder (resources/package).');
             return;
         } else if (soureFileArr.length === 0) {
-            hasError('Please upload a valid file in the installation source folder (ie: source/GlobalFxChoice.zip)');
+            hasError('Please upload a valid file in the package folder (ie: resources/package/GlobalFxChoice.zip)');
             return;
         }
         
@@ -158,7 +158,7 @@ export const InstallFxChoice = (props: propsType) => {
                     onCancel={handleAlertCancel}
                     onConfirm={installPackage}
                 >
-                    <p>This will install Global FxChoice to C:\ drive</p>
+                    <p>This will install Global FxChoice to {AppConstants.TARGET}</p>
 
                 </Alert>
             </div>

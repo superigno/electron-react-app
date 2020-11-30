@@ -1,5 +1,5 @@
 {
-  "name": "fxchoice-installation-manager",
+  "name": "globalfxchoice-installation-manager",
   "productName": "Global FxChoice Installation Manager",
   "version": "1.0.0",
   "description": "Global FxChoice Installation Manager using Electron",
@@ -21,13 +21,14 @@
         "icon": "assets/icons/pc.ico",
         "win32metadata": {
           "requested-execution-level": "requireAdministrator"
-        }
+        },
+        "extraResource": "resources/package"
       },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "fxchoice_installation_manager"
+            "name": "globalfxchoice_installation_manager"
           }
         },
         {
