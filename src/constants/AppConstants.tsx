@@ -2,7 +2,7 @@ import Path from 'path';
 
 export default class AppConstants {
 
-    static PASSWORD = '12345';
+    static PASSWORD = 'WZRHGrsBESr8wYFZ9sx0tPURuZgG2lmzyvWpwXPKz8U=';
 
     static SOURCE = Path.join('resources\\package');
     static TARGET = Path.join('C:\\');

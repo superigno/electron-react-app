@@ -94,6 +94,7 @@
     "@types/react": "^16.9.56",
     "@types/react-dom": "^16.9.9",
     "count-files": "^2.6.2",
+    "crypto-js": "^4.0.0",
     "electron-log": "^4.3.0",
     "electron-squirrel-startup": "^1.0.0",
     "node-stream-zip": "^1.12.0",

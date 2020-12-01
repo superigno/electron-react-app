@@ -3,6 +3,8 @@ import { InputGroup, Tooltip, Button, Intent, Toaster, IToastProps, Position } f
 import { Spacer } from './Spacer';
 import AppConstants from '../constants/AppConstants';
 import { Spinner } from "@blueprintjs/core";
+import sha256 from 'crypto-js/sha256';
+import Base64 from 'crypto-js/enc-base64';
 
 export const Unlock = (props: { onSuccess(isPasswordCorrect: boolean): void }) => {
 
@@ -23,7 +25,11 @@ export const Unlock = (props: { onSuccess(isPasswordCorrect: boolean): void }) =
 
     const unlock = () => {
         setInProgress(true);
-        const isCorrect: boolean = (password === AppConstants.PASSWORD);
+        
+        const hashDigest = sha256(password);
+        const pword = Base64.stringify(hashDigest);
+        const isCorrect: boolean = (pword === AppConstants.PASSWORD);
+
         //Timeout for aesthetics only
         let timeout = 300;
         if (isCorrect) {

@@ -10,7 +10,9 @@ import AppConfig from '../config/AppConfig';
 import AppToaster from "./AppToaster";
 
 const App = () => {
+
     AppConfig.loadAppDefaults();
+    
     const [isPasswordCorrect, setIsPasswordCorrect] = React.useState(false);
 
     const handleOnUnlock = (b: boolean) => {
