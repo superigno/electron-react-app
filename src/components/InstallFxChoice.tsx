@@ -135,7 +135,12 @@ export const InstallFxChoice = (props: propsType) => {
                 isInstalling({ inProgress: true, progress: progressValue, description: 'Starting Global FxChoice Service Manager service...' });
             });
         }).then(() => {
-            isInstalling({ inProgress: false, progress: 0, description: 'Installation complete.' });
+            //Put a delay to make sure processes are released first
+            return new Promise((resolve) => 
+                setTimeout(resolve, 5000)
+            );
+        }).then(() => {
+            isInstalling({ inProgress: false, progress: 0, description: '' });
             isSuccess('Global FxChoice successfully installed.');
             logger.info('Installation complete.');
         }).catch((error: any) => {

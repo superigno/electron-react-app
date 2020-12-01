@@ -1,31 +1,10 @@
 import React from 'react';
-import { Intent, ProgressBar, Alert } from '@blueprintjs/core';
-import logo from '../../assets/images/pc.png';
+import { Intent, ProgressBar } from '@blueprintjs/core';
 import { InstallFxChoice, InstallUninstallParamsType } from './InstallFxChoice';
 import { UninstallFxChoice } from './UninstallFxChoice';
 import { Spacer } from './Spacer';
 import AppConstants from '../constants/AppConstants';
-
-const AlertMessage = (props: {isSuccess: boolean, message: string}) => {
-    if (props.isSuccess) {
-        return (
-            <>
-                <h3>Success</h3>
-                <p>{unescape(props.message)}</p>
-            </>
-        )
-    } else {
-        return (
-            <>
-                <h3>Error</h3>
-                <p>{unescape(props.message)}</p>
-                <p>Please check logs for details. If error persists, contact your Adminstrator.</p>                
-            </>
-        )
-    }
-
-    //TODO: improve error
-};
+import AppToaster from "./AppToaster";
 
 export const Manager = () => {
 
@@ -33,7 +12,6 @@ export const Manager = () => {
     const target = AppConstants.TARGET;
 
     const [progress, setProgress] = React.useState({ inProgress: false, value: 0, description: null });
-    const [alert, setAlert] = React.useState({ isError: false, openAlert: false, message: null });
     
     const showProgress = (params: InstallUninstallParamsType) => {
         setProgress({
@@ -44,38 +22,15 @@ export const Manager = () => {
     };
 
     const handleError = (msg: string) => {
-        setAlert({
-            isError: true,
-            openAlert: true,
-            message: escape(msg)
-        });
+        AppToaster.failure(msg);
     };
 
     const handleSuccess = (msg: string) => {
-        setAlert({
-            isError: false,
-            openAlert: true,
-            message: escape(msg)
-        });
+        AppToaster.success(msg);
     };
-
-    const handleAlertClose = () => {
-        setAlert({
-            isError: false,
-            openAlert: false,
-            message: null
-        });
-        setProgress({
-            inProgress: false,
-            value: 0,
-            description: null
-        });
-    };   
 
     return (
         <>
-            <img className="logo" src={logo} />
-
             {progress.inProgress ?
 
                 <div className="progress-bar">
@@ -86,23 +41,13 @@ export const Manager = () => {
                         {progress.description}
                     </div>
                 </div>
-            :
+                :
                 <div>
                     <InstallFxChoice source={source} target={target} onInstall={showProgress} onError={handleError} onSuccess={handleSuccess} />
                     <Spacer />
                     <UninstallFxChoice path={target} onUninstall={showProgress} onError={handleError} onSuccess={handleSuccess} />
-                </div>                
+                </div>
             }
-
-            <Alert
-                confirmButtonText="Okay"
-                isOpen={alert.openAlert}
-                icon={alert.isError ? "error" : "tick"}
-                intent={alert.isError ? Intent.DANGER : Intent.SUCCESS}
-                onClose={handleAlertClose}
-            >
-                <AlertMessage isSuccess={!alert.isError} message={alert.message} />                
-            </Alert>
 
         </>
     );
