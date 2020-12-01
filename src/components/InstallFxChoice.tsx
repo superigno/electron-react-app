@@ -69,13 +69,13 @@ export const InstallFxChoice = (props: propsType) => {
         let zipFiles = fs.readdirSync(source).filter(function (file) {
             return Path.extname(file).toLowerCase() === '.zip';
         });
-        logger.log('Source file found:', zipFiles);
+        logger.info('Source file found:', zipFiles);
         return zipFiles;
     }
 
     const installPackage = () => {
 
-        logger.log('***** Start Installation *****');
+        logger.info('***** Start Installation *****');
 
         setAlertOpen(false);
 
@@ -113,33 +113,33 @@ export const InstallFxChoice = (props: propsType) => {
         }).then(() => {
             progressValue += estimatedServiceProgressValue;
             return RunService(fxchoiceInstallBatPath, (msg) => {
-                logger.log(msg);
+                logger.info(msg);
                 isInstalling({ inProgress: true, progress: progressValue, description: 'Installing Global FxChoice service...' });
             });
         }).then(() => {
             progressValue += estimatedServiceProgressValue;
             return RunService(fxchoiceServiceManagerInstallBatPath, (msg) => {
-                logger.log(msg);
+                logger.info(msg);
                 isInstalling({ inProgress: true, progress: progressValue, description: 'Installing Global FxChoice Service Manager service...' });
             });
         }).then(() => {
             progressValue += estimatedServiceProgressValue;
             return RunService(fxchoiceStartBatPath, (msg) => {
-                logger.log(msg);
+                logger.info(msg);
                 isInstalling({ inProgress: true, progress: progressValue, description: 'Starting Global FxChoice service...' });
             });
         }).then(() => {
             progressValue += estimatedServiceProgressValue;
             return RunService(fxchoiceServiceManagerStartBatPath, (msg) => {
-                logger.log(msg);
+                logger.info(msg);
                 isInstalling({ inProgress: true, progress: progressValue, description: 'Starting Global FxChoice Service Manager service...' });
             });
         }).then(() => {
             isInstalling({ inProgress: false, progress: 0, description: 'Installation complete.' });
             isSuccess('Global FxChoice successfully installed.');
-            logger.log('Installation complete.');
+            logger.info('Installation complete.');
         }).catch((error: any) => {
-            logger.log('Error:', error);
+            logger.error('Error:', error);
             isInstalling({ inProgress: false, progress: 0, description: error });
             hasError(error);
         });

@@ -60,7 +60,7 @@ export const UninstallFxChoice = (props: propsType) => {
 
     const uninstallPackage = () => {
 
-        logger.log('***** Start Uninstallation *****');
+        logger.info('***** Start Uninstallation *****');
 
         setAlertOpen(false);
 
@@ -92,15 +92,26 @@ export const UninstallFxChoice = (props: propsType) => {
                 totalFileCount += count;
             }).then(() => {
                 progressValue += estimatedServiceProgressValue;
-                return RunService(fxchoiceBatPath, (msg) => {
-                    logger.log(msg);
-                    isUninstalling({ inProgress: true, progress: progressValue, description: 'Uninstalling Global FxChoice service...' });
+                return RunService(fxchoiceServiceManagerBatPath, (msg) => {
+                    logger.info(msg);
+                    isUninstalling({ inProgress: true, progress: progressValue, description: 'Uninstalling Global FxChoice Service Manager service...' });
                 });
             }).then(() => {
                 progressValue += estimatedServiceProgressValue;
-                return RunService(fxchoiceServiceManagerBatPath, (msg) => {
-                    logger.log(msg);
-                    isUninstalling({ inProgress: true, progress: progressValue, description: 'Uninstalling Global FxChoice Service Manager service...' });
+                return RunService(fxchoiceBatPath, (msg) => {
+                    logger.info(msg);
+                    isUninstalling({ inProgress: true, progress: progressValue, description: 'Uninstalling Global FxChoice service...' });
+                });
+            }).then(() => {
+                //Put a delay to make sure processes are released first before deleting the folders...
+                return new Promise((resolve) => 
+                    setTimeout(resolve, 5000)
+                );
+            }).then(() => {
+                return deleteFolderRecursive(fxchoiceServiceManagerPath, (filename: string) => {
+                    totalDeleted++;
+                    progressValue = (totalDeleted / totalFileCount) + (estimatedServiceProgressValue*numberOfServices);
+                    isUninstalling({ inProgress: true, progress: progressValue, description: `Uninstalling ${filename}` });
                 });
             }).then(() => {
                 return deleteFolderRecursive(fxchoicePath, (filename: string) => {
@@ -109,17 +120,11 @@ export const UninstallFxChoice = (props: propsType) => {
                     isUninstalling({ inProgress: true, progress: progressValue, description: `Uninstalling ${filename}` });
                 });
             }).then(() => {
-                return deleteFolderRecursive(fxchoiceServiceManagerPath, (filename: string) => {
-                    totalDeleted++;
-                    progressValue = (totalDeleted / totalFileCount) + (estimatedServiceProgressValue*numberOfServices);
-                    isUninstalling({ inProgress: true, progress: progressValue, description: `Uninstalling ${filename}` });
-                })
-            }).then(() => {
                 isUninstalling({ inProgress: false, progress: 0, description: null });
                 isSuccess('Global FxChoice successfully uninstalled.');
-                logger.log('Uninstallation complete.');
+                logger.info('Uninstallation complete.');
             }).catch(error => {
-                logger.log('Error:', error);
+                logger.error('Error:', error);
                 isUninstalling({ inProgress: false, progress: 0, description: error });
                 hasError(error);
             });

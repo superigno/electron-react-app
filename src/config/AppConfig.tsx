@@ -18,13 +18,13 @@ export default class AppConfig {
     
         //Log uncaught errors
         window.onerror = function (message, url, line, col) {
-            logger.error(`ERROR: ${message}\n${url}:${line}:${col}`);
+            logger.error(`Uncaught Error: ${message}\n${url}:${line}:${col}`);
             return false;
         };
     
         //Log uncaught node errors
         process.on('uncaughtException', (err) => {
-            logger.error('ERROR:', err);
+            logger.error('Uncaught Exception:', err);
             return false;
         });
     

@@ -6,7 +6,11 @@ import StreamZip from 'node-stream-zip';
 export const getTotalFileCount = (path: string): Promise<number> => {
     return new Promise((resolve) => {
         countFiles(path, function (err: any, results: any) {
-            resolve(results.files);
+            if (results) {
+                resolve(results.files);
+            } else {
+                resolve(0);
+            }            
         });
     });
 };
