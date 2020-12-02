@@ -80,8 +80,8 @@ export const InstallFxChoice = (props: propsType) => {
         setAlertOpen(false);
 
         if (isTargetDirectoriesExist()) {
-            hasError('Directories already exist. Click \'Uninstall Global FxChoice\' first for complete uninstallation.');
-            logger.error('Directories already exist.');
+            hasError('Global FxChoice already installed. To reinstall, click \'Uninstall Global FxChoice\' first, then try again.');
+            logger.error('Global FxChoice already installed.');
             return;
         }
 
@@ -112,26 +112,22 @@ export const InstallFxChoice = (props: propsType) => {
             isInstalling({ inProgress: true, progress: progressValue, description: `Installing ${filename}` });
         }).then(() => {
             progressValue += estimatedServiceProgressValue;
-            return RunService(fxchoiceInstallBatPath, (msg) => {
-                logger.info(msg);
+            return RunService(fxchoiceInstallBatPath, () => {
                 isInstalling({ inProgress: true, progress: progressValue, description: 'Installing Global FxChoice service...' });
             });
         }).then(() => {
             progressValue += estimatedServiceProgressValue;
-            return RunService(fxchoiceServiceManagerInstallBatPath, (msg) => {
-                logger.info(msg);
+            return RunService(fxchoiceServiceManagerInstallBatPath, () => {
                 isInstalling({ inProgress: true, progress: progressValue, description: 'Installing Global FxChoice Service Manager service...' });
             });
         }).then(() => {
             progressValue += estimatedServiceProgressValue;
-            return RunService(fxchoiceStartBatPath, (msg) => {
-                logger.info(msg);
+            return RunService(fxchoiceStartBatPath, () => {
                 isInstalling({ inProgress: true, progress: progressValue, description: 'Starting Global FxChoice service...' });
             });
         }).then(() => {
             progressValue += estimatedServiceProgressValue;
-            return RunService(fxchoiceServiceManagerStartBatPath, (msg) => {
-                logger.info(msg);
+            return RunService(fxchoiceServiceManagerStartBatPath, () => {
                 isInstalling({ inProgress: true, progress: progressValue, description: 'Starting Global FxChoice Service Manager service...' });
             });
         }).then(() => {
@@ -140,13 +136,13 @@ export const InstallFxChoice = (props: propsType) => {
                 setTimeout(resolve, 5000)
             );
         }).then(() => {
-            isInstalling({ inProgress: false, progress: 0, description: '' });
             isSuccess('Global FxChoice successfully installed.');
             logger.info('Installation complete.');
         }).catch((error: any) => {
             logger.error('Error:', error);
-            isInstalling({ inProgress: false, progress: 0, description: error });
-            hasError(error);
+            hasError(`${error}. See logs/fxchoice.log for details.`);
+        }).finally(() => {
+            isInstalling({ inProgress: false, progress: 0, description: '' });
         });
 
     };
@@ -163,7 +159,7 @@ export const InstallFxChoice = (props: propsType) => {
                     onCancel={handleAlertCancel}
                     onConfirm={installPackage}
                 >
-                    <p>This will install Global FxChoice to {AppConstants.TARGET}</p>
+                    <p>This will install Global FxChoice to {target}</p>
 
                 </Alert>
             </div>

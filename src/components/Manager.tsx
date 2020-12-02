@@ -32,8 +32,8 @@ export const Manager = () => {
             
             //This prevents progress bar to run continuously in event of an unexpected error
             tId = setTimeout(() => {
-                logger.error('Operation timed out. Check logs for details.');
-                handleError('Operation timed out. Check logs for details.');
+                logger.error('Operation timed out. See logs/fxchoice.log for details.');
+                handleError('Operation timed out. See logs/fxchoice.log for details.');
                 setProgress({
                     inProgress: false,
                     value: 0,

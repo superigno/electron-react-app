@@ -1,8 +1,8 @@
 {
-  "name": "globalfxchoice-installation-manager",
-  "productName": "Global FxChoice Installation Manager",
+  "name": "globalfxchoice-installater",
+  "productName": "Global FxChoice Installer",
   "version": "1.0.0",
-  "description": "Global FxChoice Installation Manager using Electron",
+  "description": "Global FxChoice Installater using Electron",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -17,7 +17,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "name": "GlobalFxChoiceInstallationManager",
+        "name": "GlobalFxChoiceInstaller",
         "icon": "assets/icons/pc.ico",
         "win32metadata": {
           "requested-execution-level": "requireAdministrator"
@@ -28,7 +28,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "globalfxchoice_installation_manager"
+            "name": "globalfxchoice_installer"
           }
         },
         {

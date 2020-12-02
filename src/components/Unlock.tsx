@@ -15,7 +15,7 @@ export const Unlock = (props: { onSuccess(isPasswordCorrect: boolean): void }) =
     const lockButton = (
         <Tooltip content={`${showPassword ? "Hide" : "Show"} password`} >
             <Button
-                icon={showPassword ? "unlock" : "lock"}
+                icon={showPassword ? "eye-open" : "eye-off"}
                 intent={Intent.WARNING}
                 minimal={true}
                 onClick={handleLockClick}
@@ -67,6 +67,7 @@ export const Unlock = (props: { onSuccess(isPasswordCorrect: boolean): void }) =
                         onChange={handleOnChange}
                         value={password}
                         onKeyDown={handleOnKeyDown}
+                        autoFocus
                     />
                     <Spacer />
                     <Button intent={Intent.PRIMARY} onClick={unlock} text="Unlock" />

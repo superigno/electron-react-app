@@ -65,8 +65,8 @@ export const UninstallFxChoice = (props: propsType) => {
         setAlertOpen(false);
 
         if (!isDirectoriesExist()) {
-            hasError('Already uninstalled.');
-            logger.error('Already uninstalled.');
+            hasError('Global FxChoice already uninstalled.');
+            logger.error('Global FxChoice already uninstalled.');
             return;
         }
 
@@ -92,14 +92,12 @@ export const UninstallFxChoice = (props: propsType) => {
                 totalFileCount += count;
             }).then(() => {
                 progressValue += estimatedServiceProgressValue;
-                return RunService(fxchoiceServiceManagerBatPath, (msg) => {
-                    logger.info(msg);
+                return RunService(fxchoiceServiceManagerBatPath, () => {
                     isUninstalling({ inProgress: true, progress: progressValue, description: 'Uninstalling Global FxChoice Service Manager service...' });
                 });
             }).then(() => {
                 progressValue += estimatedServiceProgressValue;
-                return RunService(fxchoiceBatPath, (msg) => {
-                    logger.info(msg);
+                return RunService(fxchoiceBatPath, () => {
                     isUninstalling({ inProgress: true, progress: progressValue, description: 'Uninstalling Global FxChoice service...' });
                 });
             }).then(() => {
@@ -120,13 +118,13 @@ export const UninstallFxChoice = (props: propsType) => {
                     isUninstalling({ inProgress: true, progress: progressValue, description: `Uninstalling ${filename}` });
                 });
             }).then(() => {
-                isUninstalling({ inProgress: false, progress: 0, description: null });
                 isSuccess('Global FxChoice successfully uninstalled.');
                 logger.info('Uninstallation complete.');
             }).catch(error => {
                 logger.error('Error:', error);
-                isUninstalling({ inProgress: false, progress: 0, description: error });
-                hasError(error);
+                hasError(`${error}. See logs/fxchoice.log for details.`);                
+            }).finally(() => {
+                isUninstalling({ inProgress: false, progress: 0, description: '' });
             });
 
     };
