@@ -80,7 +80,7 @@ export const InstallFxChoice = (props: propsType) => {
         setAlertOpen(false);
 
         if (isTargetDirectoriesExist()) {
-            hasError('Directories already exist.');
+            hasError('Directories already exist. Click \'Uninstall Global FxChoice\' first for complete uninstallation.');
             logger.error('Directories already exist.');
             return;
         }

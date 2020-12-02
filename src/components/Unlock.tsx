@@ -46,6 +46,12 @@ export const Unlock = (props: { onSuccess(isPasswordCorrect: boolean): void }) =
         setPassword(e.target.value);
     };
 
+    const handleOnKeyDown = (e: any) => {
+        if(e.key === 'Enter') {
+            unlock();
+        }
+    };
+
     const [inProgress, setInProgress] = React.useState(false);
 
     return (
@@ -60,6 +66,7 @@ export const Unlock = (props: { onSuccess(isPasswordCorrect: boolean): void }) =
                         type={showPassword ? "text" : "password"}
                         onChange={handleOnChange}
                         value={password}
+                        onKeyDown={handleOnKeyDown}
                     />
                     <Spacer />
                     <Button intent={Intent.PRIMARY} onClick={unlock} text="Unlock" />

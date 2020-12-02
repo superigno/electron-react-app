@@ -4,6 +4,8 @@ export default class AppConstants {
 
     static PASSWORD = 'WZRHGrsBESr8wYFZ9sx0tPURuZgG2lmzyvWpwXPKz8U=';
 
+    static PROGRESS_TIMEOUT_IN_SECS = 180;
+
     static SOURCE = Path.join('resources\\package');
     static TARGET = Path.join('C:\\');
     

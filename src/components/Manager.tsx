@@ -4,7 +4,9 @@ import { InstallFxChoice, InstallUninstallParamsType } from './InstallFxChoice';
 import { UninstallFxChoice } from './UninstallFxChoice';
 import { Spacer } from './Spacer';
 import AppConstants from '../constants/AppConstants';
-import AppToaster from "./AppToaster";
+import AppToaster from './AppToaster';
+import logger from 'electron-log';
+import { remote } from 'electron';
 
 export const Manager = () => {
 
@@ -20,6 +22,31 @@ export const Manager = () => {
             description: params.description
         });
     };
+
+    React.useEffect(() => {
+        let tId: NodeJS.Timeout;
+        if (progress.inProgress) {
+
+            //Disable close button while in progress
+            remote.getCurrentWindow().setClosable(false);
+            
+            //This prevents progress bar to run continuously in event of an unexpected error
+            tId = setTimeout(() => {
+                logger.error('Operation timed out. Check logs for details.');
+                handleError('Operation timed out. Check logs for details.');
+                setProgress({
+                    inProgress: false,
+                    value: 0,
+                    description: ""
+                });
+            }, AppConstants.PROGRESS_TIMEOUT_IN_SECS * 1000);
+            
+        }
+        return () => {
+            remote.getCurrentWindow().setClosable(true);
+            clearTimeout(tId);
+        }
+    }, [progress.inProgress]);
 
     const handleError = (msg: string) => {
         AppToaster.failure(msg);
