@@ -6,9 +6,8 @@ import { Spacer } from './Spacer';
 import AppConstants from '../constants/AppConstants';
 import AppToaster from './AppToaster';
 import logger from 'electron-log';
-import { remote } from 'electron';
 
-export const Manager = () => {
+export const Manager = (props: {onProgress: (isInProgress:boolean) => void}) => {
 
     const source = AppConstants.SOURCE;
     const target = AppConstants.TARGET;
@@ -26,10 +25,9 @@ export const Manager = () => {
     React.useEffect(() => {
         let tId: NodeJS.Timeout;
         if (progress.inProgress) {
-
-            //Disable close button while in progress
-            remote.getCurrentWindow().setClosable(false);
             
+            props.onProgress(true);      
+                  
             //This prevents progress bar to run continuously in event of an unexpected error
             tId = setTimeout(() => {
                 logger.error('Operation timed out. See logs/fxchoice.log for details.');
@@ -43,7 +41,7 @@ export const Manager = () => {
             
         }
         return () => {
-            remote.getCurrentWindow().setClosable(true);
+            props.onProgress(false);
             clearTimeout(tId);
         }
     }, [progress.inProgress]);

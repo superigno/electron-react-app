@@ -9,12 +9,14 @@ import { Unlock } from './Unlock';
 import { Lock } from './Lock';
 import AppConfig from '../config/AppConfig';
 import AppToaster from "./AppToaster";
+import { remote } from 'electron';
 
 const App = () => {
 
     AppConfig.loadAppDefaults();
     
     const [isPasswordCorrect, setIsPasswordCorrect] = React.useState(false);
+    const [hideLock, setHideLock] = React.useState(false);
 
     const handleOnUnlock = (b: boolean) => {
         if (b) {
@@ -30,13 +32,19 @@ const App = () => {
         AppToaster.success("Locked", 1000);
     }
 
+    const handleOnProgress = (b: boolean) => {
+        setHideLock(b);
+        //Disable close button while in progress
+        remote.getCurrentWindow().setClosable(!b);
+    }
+
     return (
         <>
             <div className="center-container">
                 <img className="logo" src={logo} />
-                {isPasswordCorrect ? <Manager /> : <Unlock onSuccess={handleOnUnlock} />}
+                {isPasswordCorrect ? <Manager onProgress={handleOnProgress} /> : <Unlock onSuccess={handleOnUnlock} />}
                 <div className="footer">Copyright © 2020 Pure Commerce. All rights reserved.</div>
-                {isPasswordCorrect && <Lock onClick={handleOnLock} />}
+                {isPasswordCorrect && !hideLock && <Lock onClick={handleOnLock} />}
             </div>
         </>
     );
