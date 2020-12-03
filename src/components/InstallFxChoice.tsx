@@ -102,13 +102,16 @@ export const InstallFxChoice = (props: propsType) => {
 
         let totalSizeExtracted = 0;
         let progressValue: number = 0;
+        
         //hack for aesthetic purposes
-        const estimatedServiceProgressValue: number = 0.01;
-        const numberOfServices = 4;
+        const estimatedServiceProgressValue: number = 0.02;
+        const numberOfServicesPlusOne = 4+1;
+
+        isInstalling({ inProgress: true, progress: 0, description: 'Preparing to install Global FxChoice...' });
 
         extractZip(sourceFilePath, target, (entry, filename, totalSize) => {
             totalSizeExtracted += entry.size;
-            progressValue = (totalSizeExtracted / totalSize) - (estimatedServiceProgressValue * numberOfServices);
+            progressValue = (totalSizeExtracted / totalSize) - (estimatedServiceProgressValue * numberOfServicesPlusOne);
             isInstalling({ inProgress: true, progress: progressValue, description: `Installing ${filename}` });
         }).then(() => {
             progressValue += estimatedServiceProgressValue;

@@ -6,21 +6,21 @@ export default class AppToaster {
         position: Position.TOP,
     });
 
-    static success = (msg: string) => {
+    static success = (msg: string, timeout?: number) => {
         AppToaster.toaster.show({
             icon: "tick",
             intent: Intent.SUCCESS,
             message: msg,
-            timeout: 3000
+            timeout: timeout || 3000
         });
     };
 
-    static failure = (msg: string) => {
+    static failure = (msg: string, timeout?: number) => {
         AppToaster.toaster.show({
             icon: "error",
             intent: Intent.DANGER,
             message: msg,
-            timeout: 3000
+            timeout: timeout || 3000
         });
     };
 }

@@ -22,7 +22,7 @@
 }
 
 .logo {
-    margin: 30px 0px 20px 0px;
+    margin: 40px 0px 20px 0px;
 }
 
 .footer {
@@ -34,10 +34,18 @@
     background-color: rgb(44, 68, 132);
     color: white;
     text-align: center;
-    padding: 3px;
+    padding: 5px;
 }
 
 .unlock {
     width: 50%;
     margin: 0 auto;
+}
+
+.lock {
+    position:fixed;
+    bottom:4px;
+    right:3px;   
+    opacity:50%;
+    color: white;
 }

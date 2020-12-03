@@ -78,9 +78,10 @@ export const UninstallFxChoice = (props: propsType) => {
         const fxchoiceServiceManagerBatPath = Path.join(fxchoiceServiceManagerPath, AppConstants.UNINSTALL_MANAGER_SERVICE_PATH);
 
         let progressValue: number = 0;
+        
         //hack for aesthetic purposes
-        const estimatedServiceProgressValue: number = 0.01;
-        const numberOfServices = 2;
+        const estimatedServiceProgressValue: number = 0.02;
+        const numberOfServicesPlusOne = 2+1;
 
         isUninstalling({ inProgress: true, progress: 0, description: 'Preparing to uninstall Global FxChoice...' });
 
@@ -108,13 +109,13 @@ export const UninstallFxChoice = (props: propsType) => {
             }).then(() => {
                 return deleteFolderRecursive(fxchoiceServiceManagerPath, (filename: string) => {
                     totalDeleted++;
-                    progressValue = (totalDeleted / totalFileCount) + (estimatedServiceProgressValue*numberOfServices);
+                    progressValue = (totalDeleted / totalFileCount) + (estimatedServiceProgressValue*numberOfServicesPlusOne);
                     isUninstalling({ inProgress: true, progress: progressValue, description: `Uninstalling ${filename}` });
                 });
             }).then(() => {
                 return deleteFolderRecursive(fxchoicePath, (filename: string) => {
                     totalDeleted++;
-                    progressValue = (totalDeleted / totalFileCount) + (estimatedServiceProgressValue*numberOfServices);
+                    progressValue = (totalDeleted / totalFileCount) + (estimatedServiceProgressValue*numberOfServicesPlusOne);
                     isUninstalling({ inProgress: true, progress: progressValue, description: `Uninstalling ${filename}` });
                 });
             }).then(() => {
