@@ -123,7 +123,7 @@ export const UninstallFxChoice = (props: propsType) => {
                 logger.info('Uninstallation complete.');
             }).catch(error => {
                 logger.error('Error:', error);
-                hasError(`${error}. See logs/fxchoice.log for details.`);                
+                hasError(`${error}. See ${Path.resolve('logs/fxchoice.log')} for details.`);                
             }).finally(() => {
                 isUninstalling({ inProgress: false, progress: 0, description: '' });
             });

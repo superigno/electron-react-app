@@ -87,10 +87,10 @@ export const InstallFxChoice = (props: propsType) => {
 
         let soureFileArr = getSourceFile();
         if (soureFileArr.length > 1) {
-            hasError('Too many .zip files in the package folder (resources/package).');
+            hasError(`Too many .zip files in the package folder ${Path.resolve('resources/package')}.`);
             return;
         } else if (soureFileArr.length === 0) {
-            hasError('Please upload a valid file in the package folder (ie: resources/package/GlobalFxChoice.zip)');
+            hasError(`Please upload a valid file in the package folder (ie: ${Path.resolve('resources/package/GlobalFxChoice.zip')})`);
             return;
         }
 
@@ -143,7 +143,7 @@ export const InstallFxChoice = (props: propsType) => {
             logger.info('Installation complete.');
         }).catch((error: any) => {
             logger.error('Error:', error);
-            hasError(`${error}. See logs/fxchoice.log for details.`);
+            hasError(`${error}. See ${Path.resolve('logs/fxchoice.log')} for details.`);                
         }).finally(() => {
             isInstalling({ inProgress: false, progress: 0, description: '' });
         });

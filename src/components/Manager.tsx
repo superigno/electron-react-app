@@ -6,6 +6,7 @@ import { Spacer } from './Spacer';
 import AppConstants from '../constants/AppConstants';
 import AppToaster from './AppToaster';
 import logger from 'electron-log';
+import Path from 'path';
 
 export const Manager = (props: {onProgress: (isInProgress:boolean) => void}) => {
 
@@ -30,8 +31,8 @@ export const Manager = (props: {onProgress: (isInProgress:boolean) => void}) => 
                   
             //This prevents progress bar to run continuously in event of an unexpected error
             tId = setTimeout(() => {
-                logger.error('Operation timed out. See logs/fxchoice.log for details.');
-                handleError('Operation timed out. See logs/fxchoice.log for details.');
+                logger.error('Operation timed out.');
+                handleError(`Operation timed out. See ${Path.resolve('logs/fxchoice.log')} for details.`);
                 setProgress({
                     inProgress: false,
                     value: 0,

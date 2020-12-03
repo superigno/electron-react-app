@@ -38,15 +38,8 @@ export const RunService = (path: string, cb: () => void) => {
             });
 
             bat.on('error', function (err) {
-                const NO_SUCH_FILE_OR_DIRECTORY_ABBR = 'uninstallService.bat ENOENT';
-                if (err.message.indexOf(NO_SUCH_FILE_OR_DIRECTORY_ABBR) > -1) {
-                    logger.info('Service file/directory may have been removed already, do not reject');
-                    bat.kill();
-                    resolve('Continue');
-                } else {
-                    bat.kill();
-                    reject(err.message);
-                }
+                bat.kill();
+                reject(err.message);
             });
 
             bat.on('exit', (code) => {
