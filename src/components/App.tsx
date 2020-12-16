@@ -9,42 +9,45 @@ import { Unlock } from './Unlock';
 import { Lock } from './Lock';
 import AppConfig from '../config/AppConfig';
 import AppToaster from "./AppToaster";
+import AppConstants from "../constants/AppConstants";
 import { remote } from 'electron';
 
 const App = () => {
 
     AppConfig.loadAppDefaults();
+
+    const isRequirePassword = AppConstants.REQUIRE_PASSWORD;
     
-    const [isPasswordCorrect, setIsPasswordCorrect] = React.useState(false);
+    const [isLocked, setIsLocked] = React.useState(isRequirePassword);
     const [hideLock, setHideLock] = React.useState(false);
 
-    const handleOnUnlock = (b: boolean) => {
-        if (b) {
+    const handleOnUnlock = (isUnlocked: boolean) => {
+        if (isUnlocked) {
             AppToaster.success("Unlocked", 1000);
         } else {
             AppToaster.failure("Wrong password");
         }
-        setIsPasswordCorrect(b);
+        setIsLocked(!isUnlocked);
     }
 
     const handleOnLock = () => {
-        setIsPasswordCorrect(false);
+        setIsLocked(true);
         AppToaster.success("Locked", 1000);
     }
 
-    const handleOnProgress = (b: boolean) => {
-        setHideLock(b);
+    const handleOnProgress = (isInProgress: boolean) => {
+        setHideLock(isInProgress);
         //Disable close button while in progress
-        remote.getCurrentWindow().setClosable(!b);
+        remote.getCurrentWindow().setClosable(!isInProgress);
     }
 
     return (
         <>
             <div className="center-container">
                 <img className="logo" src={logo} />
-                {isPasswordCorrect ? <Manager onProgress={handleOnProgress} /> : <Unlock onSuccess={handleOnUnlock} />}
+                {isLocked ? <Unlock onSuccess={handleOnUnlock} /> : <Manager onProgress={handleOnProgress} /> }
                 <div className="footer">Copyright © 2020 Pure Commerce. All rights reserved.</div>
-                {isPasswordCorrect && !hideLock && <Lock onClick={handleOnLock} />}
+                {isRequirePassword && !isLocked && !hideLock && <Lock onClick={handleOnLock} />}
             </div>
         </>
     );

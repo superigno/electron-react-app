@@ -11,6 +11,8 @@ export const Manager = (props: { onProgress: (isInProgress: boolean) => void }) 
 
     const source = AppConstants.SOURCE;
     const target = AppConstants.TARGET;
+    const hideInstallButton = AppConstants.HIDE_INSTALL;
+    const hideUninstallButton = AppConstants.HIDE_UNINSTALL;
 
     const [progress, setProgress] = React.useState({ inProgress: false, value: 0, description: null });
     const [alert, setAlert] = React.useState({ isError: false, openAlert: false, message: null });
@@ -85,9 +87,9 @@ export const Manager = (props: { onProgress: (isInProgress: boolean) => void }) 
                 </div>
                 :
                 <div>
-                    <InstallFxChoice source={source} target={target} onInstall={showProgress} onError={handleError} onSuccess={handleSuccess} />
-                    <Spacer />
-                    <UninstallFxChoice path={target} onUninstall={showProgress} onError={handleError} onSuccess={handleSuccess} />
+                    <InstallFxChoice source={source} target={target} onInstall={showProgress} onError={handleError} onSuccess={handleSuccess} hidden={hideInstallButton} />
+                    <Spacer hidden={hideInstallButton || hideUninstallButton}/>
+                    <UninstallFxChoice path={target} onUninstall={showProgress} onError={handleError} onSuccess={handleSuccess} hidden={hideUninstallButton} />
                 </div>
             }
 

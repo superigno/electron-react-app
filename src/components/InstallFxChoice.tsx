@@ -12,7 +12,8 @@ type propsType = {
     target: string,
     onInstall: (params: InstallUninstallParamsType) => void,
     onError: (msg: string) => void,
-    onSuccess: (msg: string) => void
+    onSuccess: (msg: string) => void,
+    hidden?: boolean
 };
 
 export type InstallUninstallParamsType = {
@@ -151,21 +152,23 @@ export const InstallFxChoice = (props: propsType) => {
     };
     return (
         <>
-            <div>
-                <Button intent={Intent.PRIMARY} onClick={handleAlertOpen} text="Install Global FxChoice" disabled={disableButton} />
-                <Alert
-                    cancelButtonText="Cancel"
-                    confirmButtonText="Install"
-                    icon="bring-data"
-                    intent={Intent.PRIMARY}
-                    isOpen={isAlertOpen}
-                    onCancel={handleAlertCancel}
-                    onConfirm={installPackage}
-                >
-                    <p>This will install Global FxChoice to {target}</p>
+            {!props.hidden &&
+                <div>
+                    <Button intent={Intent.PRIMARY} onClick={handleAlertOpen} text="Install Global FxChoice" disabled={disableButton} />
+                    <Alert
+                        cancelButtonText="Cancel"
+                        confirmButtonText="Install"
+                        icon="bring-data"
+                        intent={Intent.PRIMARY}
+                        isOpen={isAlertOpen}
+                        onCancel={handleAlertCancel}
+                        onConfirm={installPackage}
+                    >
+                        <p>This will install Global FxChoice to {target}</p>
 
-                </Alert>
-            </div>
+                    </Alert>
+                </div>
+            }
         </>
     )
 }

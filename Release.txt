@@ -1,4 +1,9 @@
 Release Notes:
 
+v1-1-0: 2020-12-16 Gino
+	1. Add option to require password
+	2. Add option to hide install/uninstall buttons
+	3. Change toast to alert notification when installing/uninstalling
+
 v1-0-0: 2020-12-03 Gino
 	1. Initial release

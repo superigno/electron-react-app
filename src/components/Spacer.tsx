@@ -1,5 +1,9 @@
 import React from 'react';
 
-export const Spacer = () => (
-    <div className="spacer" />
-);
+export const Spacer = (props: {hidden?: boolean}) => {
+    return <>
+        {!props.hidden &&
+            <div className="spacer" />
+        }
+    </>
+};

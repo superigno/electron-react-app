@@ -1,8 +1,8 @@
 {
   "name": "globalfxchoice-installater",
   "productName": "Global FxChoice Installer",
-  "version": "1.0.0",
-  "description": "Global FxChoice Installater using Electron",
+  "version": "1.1.0",
+  "description": "Global FxChoice Installer using Electron",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",

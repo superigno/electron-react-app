@@ -12,7 +12,8 @@ type propsType = {
     path: string,
     onUninstall: (params: InstallUninstallParamsType) => void,
     onError: (msg: string) => void,
-    onSuccess: (msg: string) => void
+    onSuccess: (msg: string) => void,
+    hidden?: boolean
 };
 
 export const UninstallFxChoice = (props: propsType) => {
@@ -132,23 +133,25 @@ export const UninstallFxChoice = (props: propsType) => {
 
     return (
         <>
-            <div>
-                <Button intent={Intent.NONE} onClick={handleAlertOpen} text="Uninstall Global FxChoice" disabled={disableButton} />
-                <Alert
-                    cancelButtonText="Cancel"
-                    confirmButtonText="Uninstall"
-                    icon="delete"
-                    intent={Intent.NONE}
-                    isOpen={isAlertOpen}
-                    onCancel={handleAlertCancel}
-                    onConfirm={uninstallPackage}
-                >
-                    <p>
-                        This will uninstall Global FxChoice. Any existing data will be completely removed. Do you want to continue?
-                    </p>
+            {!props.hidden &&
+                <div>
+                    <Button intent={Intent.NONE} onClick={handleAlertOpen} text="Uninstall Global FxChoice" disabled={disableButton} />
+                    <Alert
+                        cancelButtonText="Cancel"
+                        confirmButtonText="Uninstall"
+                        icon="delete"
+                        intent={Intent.NONE}
+                        isOpen={isAlertOpen}
+                        onCancel={handleAlertCancel}
+                        onConfirm={uninstallPackage}
+                    >
+                        <p>
+                            This will uninstall Global FxChoice. Any existing data will be completely removed. Do you want to continue?
+                        </p>
 
-                </Alert>
-            </div>
+                    </Alert>
+                </div>
+            }
         </>
     )
 }
