@@ -1,5 +1,5 @@
 {
-  "name": "globalfxchoice-installater",
+  "name": "globalfxchoice-installer",
   "productName": "Global FxChoice Installer",
   "version": "1.1.0",
   "description": "Global FxChoice Installer using Electron",
